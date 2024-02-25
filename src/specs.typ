@@ -85,21 +85,42 @@ As shown in the previous chapter, logic functions consist of 4 parts: the direct
 == Function directives:
 They are directives to specify how a certain logic function should behave on parsing & compilation --& if the directive is parented, it will also affect the children of the function--. They always start with an at symbol, following a couple of parenthesis with the directive name & the value of it. E. g:```
 /*
- *
  *  Set the directive "log" to true, which is used to
  *  tell the compiler that it should add logs that
  *  are sent to chat, to the function foo::bar & its
  *  children functions
- *
  */
 
 @(log=true) foo::bar() ...
 ```
 
-In the _C-Block Standard CB-I_, there are 3 function directives, which are: // Note: in next push, add runtime-handling directive
- - _*`load` directive:*_ [Sweetener; Not parented; accepts a bool value; default: false] if set to `true`, the function will be added to the function tag `#minecraft:load`.
- - _*`tick` directive:*_ [Sweetener; Not parented; accepts a bool value; default: false] if set to `true`, the function will be added to the function tag `#minecraft:load`.
- - _*`log` directive:*_ [Parented; accepts a bool value or string value] if set to `true`, the function will contain extra `tellraw` log commands; if set if set a string, the function will contain extra `tellraw` log commands which will be sent only to players which have a tag that matches the string; if set to `false`, the function will not contain `tellraw` log commands, if the parent function has this directive set to true, it will override it for its own body & its children functions.
+In the _C-Block Standard CB-I_, there are 4 function directives, which are:
+
+ - _*`load` directive:*_ [Sweetener; Not parented; accepts a bool value; default: `false`] if set to `true`, the function will be added to the function tag `#minecraft:load`.
+ - _*`tick` directive:*_ [Sweetener; Not parented; accepts a bool value; default: `false`] if set to `true`, the function will be added to the function tag `#minecraft:load`.
+ - _*`log` directive:*_ [Parented; accepts a bool value or string value; default: `false`] if set to `true`, the function will contain extra `tellraw` log commands; if set if set a string, the function will contain extra `tellraw` log commands which will be sent only to players which have a tag that matches the string; if set to `false`, the function will not contain `tellraw` log commands, if the parent function has this directive set to true, it will override it for its own body & its children functions.
+ - _*`private` directive:*_ [Not parented; accepts a bool value; default; default: `false`] if set to `true`, the compiled function will use a pseudonym name#footnote([Children functions behave as functions with private directive set to `true`.]) & should be only used by compiled functions from within the project, thus it will no longer be expected to be used externally & will remove runtime static type checking#footnote([Attempts of using functions with private directive set to `true` will lead to undefined behavior.]).
+
+Directives default values can be changed within a command source file using the preprocessor directive `default`. E. g:```
+/*
+ *  Set the function directive 'private' to 'true' to
+ *  all logic functions within this command source
+ *  file.
+ */
+
+#default @(private=true)
+
+foo::bar(int example) {
+  /*
+   *  The function directive 'private' of this func-
+   *  tion is set to 'false' by default.
+   */
+  MINECRAFT::SAY(example);
+}
+```
+
+//== Function name:
+//The function name denotes the location of the compiled function that
 
 // NOTE: in next push, add the missing parts
 
@@ -119,7 +140,7 @@ MINECRAFT::SAY(
   )
 }
 ```
-The first great difference between logic functions --which compile into `mcfunction` files-- & command functions is the CAPITALISATION on the function names, this is used to difference which functions should be treated as command functions & thus follow command function parsing. Take note that it uses `auto` data type, thus it should accept any data type as parameter (including macros). \ 
+The first difference between logic functions --which compile into `mcfunction` files-- & command functions is the CAPITALISATION on the function names, this is used to difference which functions should be treated as command functions & thus follow command function parsing. Take note that it uses `auto` data type, thus it should accept any data type as parameter (including macros). \ 
 
 2. Definition of the command `summon`:```
 //  summon <entity>
@@ -213,4 +234,5 @@ It is allowed the next operations related:
   )
 }
 ```
+
 
